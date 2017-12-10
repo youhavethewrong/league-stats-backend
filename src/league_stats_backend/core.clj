@@ -5,11 +5,13 @@
             [compojure.handler :as handler]
             [ring.middleware.json-response :as json-response]
             [ring.middleware.params :as params]
+            [ring.middleware.cors :refer [wrap-cors]]
             [league-stats-backend.client :as client]
             [league-stats-backend.db :as db]
             [league-stats-backend.resource :as resource]
             [league-stats-backend.system :as system]
-            [com.stuartsierra.component :as component]))
+            [com.stuartsierra.component :as component])
+  (:gen-class))
 
 (def config
   {:port 8337
@@ -41,6 +43,8 @@
   (log/info "[Starting!]")
   (log/info (str "\n" (slurp (io/resource "banner.txt"))))
   (let [handler (-> (build-routes config)
+                    (wrap-cors :access-control-allow-origin [#".*"]
+                               :access-control-allow-methods [:get :post])
                     params/wrap-params
                     json-response/wrap-json-response)]
     (system/system (assoc config :handler handler))))
