@@ -34,9 +34,7 @@
          (resource/refresh-tournaments config))
    (POST "/stats" []
          (resource/refresh-stats config))
-   {:status 404
-    :headers {"Content-Type" "text/plain"}
-    :body "No resource is available here."}))
+   (resource/not-found "No resource is available here.")))
 
 (defn start
   [config]
