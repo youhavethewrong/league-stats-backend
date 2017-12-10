@@ -13,7 +13,7 @@
                  [compojure "1.6.0"]
                  [ring/ring-core "1.6.0"]
                  [ring/ring-jetty-adapter "1.6.0"]
-                 [ring-json-response "0.2.0"]
+                 [ring/ring-json "0.4.0"]
                  [ring-cors "0.1.11"]
                  [ring/ring-defaults "0.2.1"]
                  [javax.servlet/servlet-api "2.5"]]

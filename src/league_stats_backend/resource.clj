@@ -21,8 +21,9 @@
   (db/get-tournaments db league-id))
 
 (defn get-stats
+  "Retrieve all player stats for a tournament from the db.  Use outer stats key for drop-in replacement of external API."
   [{:keys [db]} tournament-id]
-  (db/get-stats-for-tournament db tournament-id))
+  {:body {:stats (db/get-stats-for-tournament db tournament-id)}})
 
 (defn get-all-tournaments
   "Find all tournaments for all leagues from the external API."

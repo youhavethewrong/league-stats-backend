@@ -3,8 +3,8 @@
             [taoensso.timbre :as log]
             [compojure.core :refer [routes GET POST]]
             [compojure.handler :as handler]
-            [ring.middleware.json-response :as json-response]
-            [ring.middleware.params :as params]
+            [ring.middleware.json :refer [wrap-json-response]]
+            [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.cors :refer [wrap-cors]]
             [league-stats-backend.client :as client]
             [league-stats-backend.db :as db]
@@ -45,8 +45,8 @@
   (let [handler (-> (build-routes config)
                     (wrap-cors :access-control-allow-origin [#".*"]
                                :access-control-allow-methods [:get :post])
-                    params/wrap-params
-                    json-response/wrap-json-response)]
+                    wrap-params
+                    wrap-json-response)]
     (system/system (assoc config :handler handler))))
 
 (defn -main
