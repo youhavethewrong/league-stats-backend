@@ -1,6 +1,14 @@
 # League Stats Backend
 A backend service that caches and serves results from the League of Legends esports API.
 
+## Building
+
+    $ lein do clean, test, uberjar
+
+## Running
+
+    $ java -jar target/league-stats-backend*-standalone.jar
+
 ## Routes
 These are the routes currently supported by this service.
 
