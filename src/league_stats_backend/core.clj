@@ -38,6 +38,17 @@
          (resource/refresh-stats config))
    (resource/not-found "No resource is available here.")))
 
+(defn wrap-request-logging
+  [handler]
+  (fn [{:keys [request-method uri] :as request}]
+    (let [start (System/currentTimeMillis)
+          response (handler request)
+          status (:status response)
+          finish (System/currentTimeMillis)
+          total (- finish start)]
+      (log/info (format "%s %s %s (%dms)" request-method uri status total))
+      response)))
+
 (defn start
   [config]
   (log/info "[Starting!]")
@@ -45,6 +56,7 @@
   (let [handler (-> (build-routes config)
                     (wrap-cors :access-control-allow-origin [#".*"]
                                :access-control-allow-methods [:get :post])
+                    wrap-request-logging
                     wrap-params
                     wrap-json-response)]
     (system/system (assoc config :handler handler))))
