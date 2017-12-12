@@ -1,8 +1,22 @@
 (ns league-stats-backend.resource
-  (:require [compojure.route :as route]
+  (:require [clojure.string :as string]
+            [compojure.route :as route]
             [taoensso.timbre :as log]
             [league-stats-backend.client :as client]
-            [league-stats-backend.db :as db]))
+            [league-stats-backend.db :as db]
+            [clojure.string :as str]))
+
+(defn only-digits?
+  "Determines if a string contains only digits."
+  [s]
+  (and (not (string/blank? s))
+       (every? #(Character/isDigit %) s)))
+
+(defn id?
+  "Determines if a string looks like a tournament ID."
+  [s]
+  (and (not (string/blank? s))
+       (re-matches #"(?i)([a-f0-9]+\-){4}[a-f0-9]+" s)))
 
 (defn not-found
   "Log a message and return a 404 with a message in the body."
@@ -18,12 +32,18 @@
 (defn get-tournaments
   "Retrieve all tournaments from the db."
   [{:keys [db]} league-id]
-  (db/get-tournaments db league-id))
+  (if (only-digits? league-id)
+    (db/get-tournaments db league-id)
+    {:status 400
+     :body {:message (str "League ID must be a number, but was given '" league-id "'.")}}))
 
 (defn get-stats
   "Retrieve all player stats for a tournament from the db.  Use outer stats key for drop-in replacement of external API."
   [{:keys [db]} tournament-id]
-  {:body {:stats (db/get-stats-for-tournament db tournament-id)}})
+  (if (id? tournament-id)
+    {:body {:stats (db/get-stats-for-tournament db (string/lower-case tournament-id))}}
+    {:status 400
+     :body {:message (str "Tournament ID must be in UUID form, but was given '" tournament-id "'.")}}))
 
 (defn get-all-tournaments
   "Find all tournaments for all leagues from the external API."
