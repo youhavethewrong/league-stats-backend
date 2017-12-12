@@ -1,5 +1,5 @@
 # League Stats Backend
-A backend service that proxies and caches results from the League of Legends esports API.
+A backend service that caches and serves results from the League of Legends esports API.
 
 ## Routes
 These are the routes currently supported by this service.
