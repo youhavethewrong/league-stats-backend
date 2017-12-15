@@ -1,5 +1,6 @@
-# League Stats Backend
+# League Stats Backend ![CI status](https://circleci.com/gh/youhavethewrong/league-stats-backend.svg?style=shield&circle-token=9bfc47f96dfed9cbefc12ef4b2956cbbb610da96 "CI status")
 A backend service that caches and serves results from the League of Legends esports API.
+
 
 ## Building
 
