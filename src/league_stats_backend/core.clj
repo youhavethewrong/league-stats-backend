@@ -42,13 +42,13 @@
 
 (defn wrap-request-logging
   [handler]
-  (fn [{:keys [request-method uri] :as request}]
+  (fn [{:keys [remote-addr request-method uri] :as request}]
     (let [start (System/currentTimeMillis)
           response (handler request)
           status (:status response)
           finish (System/currentTimeMillis)
           total (- finish start)]
-      (log/info (format "%s %s %s (%dms)" request-method uri status total))
+      (log/info (format "%s %s %s %s (%dms)" remote-addr request-method uri status total))
       response)))
 
 (defn start
