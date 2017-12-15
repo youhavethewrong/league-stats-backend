@@ -28,6 +28,8 @@
   (routes
    (GET "/leagues" []
         (resource/get-leagues config))
+   (GET "/tournaments" []
+        (resource/get-all-tournaments config))
    (GET "/tournaments/:league-id" [league-id]
         (resource/get-tournaments config league-id))
    (GET "/stats/:tournament-id" [tournament-id]

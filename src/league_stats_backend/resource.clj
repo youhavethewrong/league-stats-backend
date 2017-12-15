@@ -13,7 +13,7 @@
        (every? #(Character/isDigit %) s)))
 
 (defn id?
-  "Determines if a string looks like a tournament ID."
+  "Determines if a string looks like a tournament ID.  It appears that they are UUIDs."
   [s]
   (and (not (string/blank? s))
        (re-matches #"(?i)([a-f0-9]+\-){4}[a-f0-9]+" s)))
@@ -30,12 +30,17 @@
   (db/get-leagues db))
 
 (defn get-tournaments
-  "Retrieve all tournaments from the db."
+  "Retrieve all tournaments for a specific league from the db."
   [{:keys [db]} league-id]
   (if (only-digits? league-id)
     (db/get-tournaments db league-id)
     {:status 400
      :body {:message (str "League ID must be a number, but was given '" league-id "'.")}}))
+
+(defn get-all-tournaments
+  "Retrieve all tournaments from the db."
+  [{:keys [db]}]
+  (db/get-all-tournaments db))
 
 (defn get-stats
   "Retrieve all player stats for a tournament from the db.  Use outer stats key for drop-in replacement of external API."
@@ -45,7 +50,7 @@
     {:status 400
      :body {:message (str "Tournament ID must be in UUID form, but was given '" tournament-id "'.")}}))
 
-(defn get-all-tournaments
+(defn- get-all-tournaments-external
   "Find all tournaments for all leagues from the external API."
   [config leagues]
   (flatten
@@ -59,7 +64,7 @@
   "Update our database with all the tournaments for all the leagues available from the external API."
   [{:keys [db] :as config}]
   (let [leagues (get-leagues config)
-        tournaments (get-all-tournaments config leagues)
+        tournaments (get-all-tournaments-external config leagues)
         tc (count tournaments)
         lc (count leagues)]
     (log/info "Synching" tc "tournaments from" lc "leagues.")
@@ -78,7 +83,7 @@
   "Update our database with all the player stats from all the tournaments for all the leagues from the external API."
   [{:keys [db] :as config}]
   (let [leagues (get-leagues config)
-        tournaments (get-all-tournaments config leagues)
+        tournaments (get-all-tournaments-external config leagues)
         player-stats (get-all-player-stats config tournaments)
         tc (count tournaments)
         pc (count player-stats)]

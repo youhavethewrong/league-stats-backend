@@ -12,6 +12,11 @@
   [db league-id]
   (jdbc/query db ["select * from tournament where league_api_key = ?" league-id]))
 
+(defn get-all-tournaments
+  "Get all tournaments."
+  [db]
+  (jdbc/query db ["select * from tournament"]))
+
 (defn get-stats-for-tournament
   "Get all the player stats for a given tournament."
   [db tournament-key]
